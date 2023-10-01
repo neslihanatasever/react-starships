@@ -1,25 +1,42 @@
-import { Card } from "@mui/material"
-import { CardContent } from "@mui/material"
-import { Typography } from "@mui/material"
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Card, CardContent, Typography } from '@mui/material';
 
-const DetailPage = () => {
-  return (
-    <>
-    <Card sx={{ width:250, height: 250}}>
-        <CardContent>
-            <Typography  sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Name : 
-            </Typography>
-            <Typography variant="h5" component="div">
-                Gender : 
-            </Typography>
-            <Typography>
-                Birthday Year :
-            </Typography>
-        </CardContent>
-    </Card>
-    </>
-  )
+interface CharacterData {
+    crew: number[];
+    consumables?: string;
 }
 
-export default DetailPage
+function DetailPage() {
+    const [detailData, setDetailData] = useState<CharacterData[]>([]);
+
+    useEffect(() => {
+        axios.get('https://swapi.dev/api/starships/') 
+            .then((response) => {
+                setDetailData(response.data.results);
+            })
+            .catch((error) => {
+                console.error('API isteği başarısız: ', error);
+            });
+    }, []);
+
+    return (
+        <div>
+            <Card sx={{ width: 600, height: 350, background: 'bisque', borderRadius: 10, pt: 5 }}>
+                <CardContent sx={{ display: "flex" }}>
+                    <Typography>
+                        vgfsbfg{detailData.crew?.join(', ')}
+                    </Typography>
+                    <Typography component="div">
+                        aaaa{detailData.consumables}
+                    </Typography>
+                    <Typography>
+                        kkkkkkk
+                    </Typography>
+                </CardContent>
+            </Card>
+        </div>
+    )
+}
+
+export default DetailPage;

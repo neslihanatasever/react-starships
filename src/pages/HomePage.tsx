@@ -1,6 +1,7 @@
-import { Card, CardContent, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { Card, CardContent, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 interface CharacterData {
     manufacturer: string;
@@ -9,38 +10,41 @@ interface CharacterData {
 }
 
 function HomePage() {
-
-    const [characterData, setCharacterData] = useState<CharacterData>({ name: '', starship_class: '', manufacturer: '' });
+    const [starships, setStarships] = useState<CharacterData[]>([]);
 
     useEffect(() => {
-        axios.get('https://swapi.dev/api/starships/22')
+        axios.get('https://swapi.dev/api/starships/')
             .then((response) => {
-                setCharacterData(response.data);
+                setStarships(response.data.results);
             })
             .catch((error) => {
                 console.error('SWAPI isteği başarısız: ', error);
             });
     }, []);
 
-    console.log(characterData)
+    console.log(starships);
 
     return (
-        <>
-            <Card sx={{ width: 600, height: 350}}>
-                <CardContent>
-                    <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                        Name :  {characterData.name}
-                    </Typography>
-                    <Typography variant="h5" component="div">
-                        Starship Class : {characterData.starship_class}
-                    </Typography>
-                    <Typography>
-                        Birthday Year : {characterData.manufacturer}
-                    </Typography>
-                </CardContent>
-            </Card>
-        </>
+        <div>
+            {starships.map((starship, index) => (
+                <Link key={index} to="/detail-page">
+                <Card sx={{ width: 600, height: 350, background: 'bisque', borderRadius: 10, pt: 5, marginBottom: 10 }}>
+                    <CardContent sx={{ display: "flex" }}>
+                        <Typography>
+                            Name :  {starship.name}
+                        </Typography>
+                        <Typography component="div">
+                            Starship Class : {starship.starship_class}
+                        </Typography>
+                        <Typography>
+                            Birthday Year : {starship.manufacturer}
+                        </Typography>
+                    </CardContent>
+                </Card>
+                </Link>
+            ))}
+        </div>
     )
 }
-console.log("HomePage")
-export default HomePage
+
+export default HomePage;
